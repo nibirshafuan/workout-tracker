@@ -1,72 +1,66 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export default function Navbar() {
   return (
-    <header className="border-b border-[#292929] bg-[#0b0b0b]">
-      <div className="mx-auto flex min-h-[76px] max-w-7xl items-center justify-between gap-6 px-5 sm:px-8 lg:px-10">
-        <Link
-          href="/"
-          className="shrink-0 text-xl font-black tracking-[-0.04em] text-white sm:text-2xl"
-        >
-          WORKOUT
-          <span className="text-[#ccff00]">.</span>
+    <nav className="sticky top-0 z-50 border-b border-[#202227] bg-[#090a0c]">
+      <div className="mx-auto flex h-[72px] max-w-[1400px] items-center justify-between px-5 sm:px-8">
+
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-2">
+          <Image
+            src="/logo.png"
+            alt="FitLog"
+            width={28}
+            height={28}
+            className="h-7 w-auto"
+          />
+
+          <span className="text-xl font-black">
+            FITLOG
+          </span>
         </Link>
 
-        <nav className="hidden items-center gap-8 md:flex">
+        {/* Navigation */}
+        <div className="absolute left-1/2 flex -translate-x-1/2 items-center gap-2">
           <Link
             href="/"
-            className="relative py-2 text-sm font-bold uppercase tracking-[0.12em] text-[#ccff00]"
+            className="rounded-full bg-[#142500] px-6 py-3 text-sm font-bold text-white transition hover:bg-[#1d3500]"
           >
-            Workout
-            <span className="absolute bottom-0 left-0 h-[2px] w-full bg-[#ccff00]" />
+            Workouts
           </Link>
 
           <Link
             href="/my-plan"
-            className="py-2 text-sm font-bold uppercase tracking-[0.12em] text-[#8a8a8a] transition-colors hover:text-white"
+            className="px-4 py-3 text-sm font-bold text-gray-400 transition hover:text-white"
           >
             My Plan
           </Link>
-        </nav>
+        </div>
 
-        <div className="flex items-center gap-2 sm:gap-3">
-          <Link
-            href="/my-plan"
-            className="flex items-center gap-2 rounded-full bg-[#ccff00] px-3 py-2 text-xs font-black uppercase tracking-[0.08em] text-black transition-transform hover:scale-105 sm:px-4"
-          >
+        {/* Counters */}
+        <div className="flex items-center gap-5 text-sm">
+          <Link href="/my-plan" className="flex items-center gap-2">
             <span>Plan</span>
-            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-black px-1 text-[10px] text-[#ccff00]">
+
+            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#ccff00] px-1 text-xs font-bold text-black">
               0
             </span>
           </Link>
 
           <Link
             href="/my-plan"
-            className="flex items-center gap-2 rounded-full border border-[#555] px-3 py-2 text-xs font-black uppercase tracking-[0.08em] text-white transition-colors hover:border-[#ccff00] sm:px-4"
+            className="flex items-center gap-2 text-gray-300"
           >
             <span>Saved</span>
-            <span className="flex h-5 min-w-5 items-center justify-center rounded-full border border-[#555] px-1 text-[10px]">
+
+            <span className="flex h-5 min-w-5 items-center justify-center rounded-full border border-[#363940] px-1 text-xs text-gray-400">
               0
             </span>
           </Link>
         </div>
+
       </div>
-
-      <nav className="flex border-t border-[#1c1c1c] md:hidden">
-        <Link
-          href="/"
-          className="flex flex-1 items-center justify-center border-r border-[#1c1c1c] py-3 text-xs font-bold uppercase tracking-[0.12em] text-[#ccff00]"
-        >
-          Workout
-        </Link>
-
-        <Link
-          href="/my-plan"
-          className="flex flex-1 items-center justify-center py-3 text-xs font-bold uppercase tracking-[0.12em] text-[#8a8a8a] transition-colors hover:text-white"
-        >
-          My Plan
-        </Link>
-      </nav>
-    </header>
+    </nav>
   );
 }

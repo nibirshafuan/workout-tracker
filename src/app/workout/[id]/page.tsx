@@ -22,6 +22,8 @@ type Workout = {
 };
 
 const API_URL = "https://api.abcz.workers.dev/api/fitlog";
+const PLAN_KEY = "fitlog-plan";
+const SAVED_KEY = "fitlog-saved";
 
 export default function WorkoutDetailsPage() {
   const params = useParams();
@@ -43,6 +45,24 @@ export default function WorkoutDetailsPage() {
 
         const data: Workout = await response.json();
         setWorkout(data);
+
+        const plan = JSON.parse(
+          localStorage.getItem(PLAN_KEY) || "[]"
+        ) as Workout[];
+
+        const savedWorkouts = JSON.parse(
+          localStorage.getItem(SAVED_KEY) || "[]"
+        ) as Workout[];
+
+        setAddedToPlan(
+          plan.some((item) => Number(item.id) === Number(data.id))
+        );
+
+        setSaved(
+          savedWorkouts.some(
+            (item) => Number(item.id) === Number(data.id)
+          )
+        );
       } catch (error) {
         console.error("Failed to load workout:", error);
         setWorkout(null);
@@ -55,6 +75,69 @@ export default function WorkoutDetailsPage() {
       fetchWorkout();
     }
   }, [id]);
+
+  const addToPlan = () => {
+    if (!workout) return;
+
+    const plan = JSON.parse(
+      localStorage.getItem(PLAN_KEY) || "[]"
+    ) as Workout[];
+
+    const alreadyAdded = plan.some(
+      (item) => Number(item.id) === Number(workout.id)
+    );
+
+    if (alreadyAdded) {
+      const updatedPlan = plan.filter(
+        (item) => Number(item.id) !== Number(workout.id)
+      );
+
+      localStorage.setItem(PLAN_KEY, JSON.stringify(updatedPlan));
+      setAddedToPlan(false);
+      window.dispatchEvent(new Event("fitlog-storage"));
+      return;
+    }
+
+    if (plan.length >= 5) {
+      alert("You can add a maximum of 5 workouts to today's plan.");
+      return;
+    }
+
+    const updatedPlan = [...plan, workout];
+
+    localStorage.setItem(PLAN_KEY, JSON.stringify(updatedPlan));
+    setAddedToPlan(true);
+    window.dispatchEvent(new Event("fitlog-storage"));
+  };
+
+  const saveWorkout = () => {
+    if (!workout) return;
+
+    const savedWorkouts = JSON.parse(
+      localStorage.getItem(SAVED_KEY) || "[]"
+    ) as Workout[];
+
+    const alreadySaved = savedWorkouts.some(
+      (item) => Number(item.id) === Number(workout.id)
+    );
+
+    if (alreadySaved) {
+      const updatedSaved = savedWorkouts.filter(
+        (item) => Number(item.id) !== Number(workout.id)
+      );
+
+      localStorage.setItem(SAVED_KEY, JSON.stringify(updatedSaved));
+      setSaved(false);
+      window.dispatchEvent(new Event("fitlog-storage"));
+      return;
+    }
+
+    const updatedSaved = [...savedWorkouts, workout];
+
+    localStorage.setItem(SAVED_KEY, JSON.stringify(updatedSaved));
+    setSaved(true);
+    window.dispatchEvent(new Event("fitlog-storage"));
+  };
 
   if (loading) {
     return (
@@ -143,10 +226,12 @@ export default function WorkoutDetailsPage() {
                       label="Calories"
                       value={`${workout.caloriesBurned} kcal`}
                     />
+
                     <div className="col-span-2 px-4 py-3">
                       <p className="text-[9px] font-bold uppercase text-[#697386]">
                         Rating
                       </p>
+
                       <p className="mt-1 text-[12px] text-[#d5d9e0]">
                         ☆ {workout.rating}
                       </p>
@@ -168,6 +253,7 @@ export default function WorkoutDetailsPage() {
                         <span className="min-w-[14px] font-bold text-[#7d8798]">
                           {index + 1}.
                         </span>
+
                         <span>{instruction}</span>
                       </li>
                     ))}
@@ -177,17 +263,21 @@ export default function WorkoutDetailsPage() {
                 <div className="mt-6 flex flex-wrap gap-3">
                   <button
                     type="button"
-                    onClick={() => setAddedToPlan(!addedToPlan)}
-                    className="rounded-lg bg-[#ccff00] px-5 py-3 text-[11px] font-bold uppercase text-black transition-all duration-200 hover:-translate-y-1"
+                    onClick={addToPlan}
+                    className={`rounded-lg px-5 py-3 text-[11px] font-bold uppercase transition-all duration-200 hover:-translate-y-1 ${
+                      addedToPlan
+                        ? "bg-[#9dcc00] text-black"
+                        : "bg-[#ccff00] text-black"
+                    }`}
                   >
                     {addedToPlan
-                      ? "Added to today's plan"
+                      ? "Remove from today's plan"
                       : "Add to today's plan"}
                   </button>
 
                   <button
                     type="button"
-                    onClick={() => setSaved(!saved)}
+                    onClick={saveWorkout}
                     className={`rounded-lg border px-5 py-3 text-[11px] font-bold uppercase transition-all duration-200 hover:-translate-y-1 ${
                       saved
                         ? "border-[#ccff00] text-[#ccff00]"
@@ -206,14 +296,22 @@ export default function WorkoutDetailsPage() {
   );
 }
 
-function Info({ label, value }: { label: string; value: string }) {
+function Info({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
   return (
     <div className="border-b border-[#272b32] px-4 py-3">
       <p className="text-[9px] font-bold uppercase text-[#697386]">
         {label}
       </p>
 
-      <p className="mt-1 text-[12px] text-[#d5d9e0]">{value}</p>
+      <p className="mt-1 text-[12px] text-[#d5d9e0]">
+        {value}
+      </p>
     </div>
   );
 }

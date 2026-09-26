@@ -78,12 +78,12 @@ export default function Home() {
                 >
                   <div className="relative h-[250px] w-full shrink-0 overflow-hidden bg-[#15171c]">
                     <Image
-                      src={workout.image}
-                      alt={workout.name}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-                      className="object-cover object-center"
-                    />
+  src={workout.image}
+  alt={workout.name}
+  fill
+  sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+  className="object-cover object-top"
+/>
                   </div>
 
                   <div className="flex flex-1 flex-col px-5 py-4">

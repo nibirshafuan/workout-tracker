@@ -49,7 +49,52 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-[#090a0c] text-white">
-      <section id="library" className="px-5 py-8 sm:px-6 lg:px-8">
+      {/* Hero */}
+      <section className="px-5 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto grid max-w-[1800px] overflow-hidden rounded-[18px] border border-[#292d35] bg-[#15171c] lg:grid-cols-[1.15fr_0.85fr]">
+          <div className="flex flex-col justify-center px-7 py-12 sm:px-10 sm:py-14 lg:px-14 lg:py-16">
+            <p className="mb-5 text-[11px] font-black uppercase tracking-[0.12em] text-[#ccff00]">
+              WORKOUT LIBRARY
+            </p>
+
+            <h1 className="max-w-[650px] text-[42px] font-black uppercase leading-[0.95] tracking-tight sm:text-[52px] lg:text-[64px]">
+              TRAIN WITH INTENT. LOG EVERY SET.
+            </h1>
+
+            <p className="mt-6 max-w-[560px] text-[14px] leading-6 text-[#8b94a5] sm:text-[15px]">
+              FitLog is a dark, no-nonsense gym companion: pick a lift, lock it
+              into today's plan, and watch the week's work add up.
+            </p>
+
+            <div className="mt-8">
+              <a
+                href="#library"
+                className="inline-flex items-center gap-2 rounded-full bg-[#ccff00] px-6 py-3 text-[11px] font-black uppercase text-black transition hover:bg-[#b9eb00]"
+              >
+                
+                <span aria-hidden="true">Browse Workouts</span>
+              </a>
+            </div>
+          </div>
+
+          <div className="relative min-h-[300px] lg:min-h-[430px]">
+            <Image
+              src="/banner.png"
+              alt="FitLog workout banner"
+              fill
+              priority
+              sizes="(max-width: 1024px) 100vw, 40vw"
+              className="object-contain object-center"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Library */}
+      <section
+        id="library"
+        className="scroll-mt-24 px-5 py-8 sm:px-6 lg:px-8"
+      >
         <div className="mx-auto max-w-[1800px]">
           <div className="mb-8">
             <h2 className="text-[32px] font-black uppercase leading-none tracking-tight sm:text-[36px]">
@@ -65,7 +110,7 @@ export default function Home() {
             <div className="flex min-h-[300px] items-center justify-center">
               <div className="flex items-center gap-3 text-[#ccff00]">
                 <div className="h-5 w-5 animate-spin rounded-full border-2 border-[#ccff00] border-t-transparent" />
-                <span className="text-sm">Loading workouts…</span>
+                <span className="text-sm">Loading workouts...</span>
               </div>
             </div>
           ) : (
@@ -115,7 +160,7 @@ export default function Home() {
                       </span>
 
                       <span className="flex items-center gap-1.5">
-                        <span className="text-[9px]">●</span>
+                        <span>•</span>
                         {workout.caloriesBurned} kcal
                       </span>
 

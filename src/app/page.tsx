@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type Workout = {
   id: number;
@@ -20,11 +20,14 @@ type Workout = {
   instructions: string[];
 };
 
+type SortOption = "duration" | "calories" | "rating";
+
 const API_URL = "https://api.abcz.workers.dev/api/fitlog";
 
 export default function Home() {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sortBy, setSortBy] = useState<SortOption>("duration");
 
   useEffect(() => {
     const fetchWorkouts = async () => {
@@ -35,7 +38,7 @@ export default function Home() {
           throw new Error("Failed to fetch workouts");
         }
 
-        const data = await response.json();
+        const data: Workout[] = await response.json();
         setWorkouts(data);
       } catch (error) {
         console.error("Failed to load workouts:", error);
@@ -46,6 +49,20 @@ export default function Home() {
 
     fetchWorkouts();
   }, []);
+
+  const sortedWorkouts = useMemo(() => {
+    return [...workouts].sort((a, b) => {
+      if (sortBy === "calories") {
+        return b.caloriesBurned - a.caloriesBurned;
+      }
+
+      if (sortBy === "rating") {
+        return b.rating - a.rating;
+      }
+
+      return a.duration - b.duration;
+    });
+  }, [workouts, sortBy]);
 
   return (
     <main className="min-h-screen bg-[#090a0c] text-white">
@@ -63,7 +80,7 @@ export default function Home() {
 
             <p className="mt-6 max-w-[560px] text-[14px] leading-6 text-[#8b94a5] sm:text-[15px]">
               FitLog is a dark, no-nonsense gym companion: pick a lift, lock it
-              into today's plan, and watch the week's work add up.
+              into today&apos;s plan, and watch the week&apos;s work add up.
             </p>
 
             <div className="mt-8">
@@ -71,8 +88,8 @@ export default function Home() {
                 href="#library"
                 className="inline-flex items-center gap-2 rounded-full bg-[#ccff00] px-6 py-3 text-[11px] font-black uppercase text-black transition hover:bg-[#b9eb00]"
               >
-                
                 <span aria-hidden="true">Browse Workouts</span>
+                
               </a>
             </div>
           </div>
@@ -96,14 +113,44 @@ export default function Home() {
         className="scroll-mt-24 px-5 py-8 sm:px-6 lg:px-8"
       >
         <div className="mx-auto max-w-[1800px]">
-          <div className="mb-8">
-            <h2 className="text-[32px] font-black uppercase leading-none tracking-tight sm:text-[36px]">
-              THE LIBRARY
-            </h2>
+          <div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h2 className="text-[32px] font-black uppercase leading-none tracking-tight sm:text-[36px]">
+                THE LIBRARY
+              </h2>
 
-            <p className="mt-2 text-[15px] text-[#7d8ba3]">
-              Twelve lifts covering every major muscle group.
-            </p>
+              <p className="mt-2 text-[15px] text-[#7d8ba3]">
+                Twelve lifts covering every major muscle group.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <label
+                htmlFor="sort-workouts"
+                className="text-[11px] font-bold uppercase tracking-wide text-[#7d8ba3]"
+              >
+                Sort By
+              </label>
+
+              <div className="relative">
+                <select
+                  id="sort-workouts"
+                  value={sortBy}
+                  onChange={(event) =>
+                    setSortBy(event.target.value as SortOption)
+                  }
+                  className="appearance-none rounded-full border border-[#343943] bg-[#15171c] py-3 pl-4 pr-10 text-[11px] font-bold uppercase text-white outline-none transition hover:border-[#ccff00] focus:border-[#ccff00]"
+                >
+                  <option value="duration">Duration</option>
+                  <option value="calories">Calories</option>
+                  <option value="rating">Rating</option>
+                </select>
+
+                <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[9px] text-[#ccff00]">
+                  ▼
+                </span>
+              </div>
+            </div>
           </div>
 
           {loading ? (
@@ -115,7 +162,7 @@ export default function Home() {
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-              {workouts.map((workout) => (
+              {sortedWorkouts.map((workout) => (
                 <Link
                   key={workout.id}
                   href={`/workout/${workout.id}`}

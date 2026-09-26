@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { toast } from "react-toastify";
 
 type Workout = {
   id: number;
@@ -105,12 +106,16 @@ export default function WorkoutDetailsPage() {
       localStorage.setItem(DONE_KEY, JSON.stringify(updatedDone));
 
       setAddedToPlan(false);
+
       window.dispatchEvent(new Event("fitlog-storage"));
+
+      toast.info("Removed from today's plan");
+
       return;
     }
 
     if (plan.length >= 5) {
-      alert("You can add a maximum of 5 workouts to today's plan.");
+      toast.error("Today's plan can contain a maximum of 5 workouts.");
       return;
     }
 
@@ -120,6 +125,8 @@ export default function WorkoutDetailsPage() {
     setAddedToPlan(true);
 
     window.dispatchEvent(new Event("fitlog-storage"));
+
+    toast.success("Added to today's plan");
   };
 
   const saveWorkout = () => {
@@ -142,6 +149,9 @@ export default function WorkoutDetailsPage() {
       setSaved(false);
 
       window.dispatchEvent(new Event("fitlog-storage"));
+
+      toast.info("Removed from saved workouts");
+
       return;
     }
 
@@ -151,6 +161,8 @@ export default function WorkoutDetailsPage() {
     setSaved(true);
 
     window.dispatchEvent(new Event("fitlog-storage"));
+
+    toast.success("Saved for later");
   };
 
   if (loading) {

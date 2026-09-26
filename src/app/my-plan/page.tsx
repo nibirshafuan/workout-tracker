@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useSyncExternalStore } from "react";
+import { toast } from "react-toastify";
 
 type Workout = {
   id: number;
@@ -132,8 +133,12 @@ export default function MyPlanPage() {
   });
 
   const removeFromPlan = (id: number) => {
+    const workout = plan.find(
+      (item) => Number(item.id) === Number(id)
+    );
+
     const updatedPlan = plan.filter(
-      (workout) => Number(workout.id) !== Number(id)
+      (item) => Number(item.id) !== Number(id)
     );
 
     const updatedDone = done.filter(
@@ -144,19 +149,35 @@ export default function MyPlanPage() {
     localStorage.setItem(DONE_KEY, JSON.stringify(updatedDone));
 
     window.dispatchEvent(new Event(STORAGE_EVENT));
+
+    toast.success(
+      `${workout?.name || "Workout"} removed from today's plan`
+    );
   };
 
   const removeFromSaved = (id: number) => {
+    const workout = saved.find(
+      (item) => Number(item.id) === Number(id)
+    );
+
     const updatedSaved = saved.filter(
-      (workout) => Number(workout.id) !== Number(id)
+      (item) => Number(item.id) !== Number(id)
     );
 
     localStorage.setItem(SAVED_KEY, JSON.stringify(updatedSaved));
 
     window.dispatchEvent(new Event(STORAGE_EVENT));
+
+    toast.success(
+      `${workout?.name || "Workout"} removed from saved`
+    );
   };
 
   const markAsDone = (id: number) => {
+    const workout = plan.find(
+      (item) => Number(item.id) === Number(id)
+    );
+
     const alreadyDone = done.includes(Number(id));
 
     const updatedDone = alreadyDone
@@ -166,13 +187,18 @@ export default function MyPlanPage() {
     localStorage.setItem(DONE_KEY, JSON.stringify(updatedDone));
 
     window.dispatchEvent(new Event(STORAGE_EVENT));
+
+    if (alreadyDone) {
+      toast.info(`${workout?.name || "Workout"} marked as not done`);
+    } else {
+      toast.success(`${workout?.name || "Workout"} marked as done`);
+    }
   };
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-[#090a0c] text-white">
       <section className="px-5 pb-16 pt-8 sm:px-8 lg:px-10">
         <div className="mx-auto w-full max-w-[1400px]">
-
           <div className="mb-9">
             <h1 className="text-[36px] font-black uppercase leading-none tracking-tight sm:text-[42px] lg:text-[48px]">
               My Plan
@@ -298,7 +324,6 @@ export default function MyPlanPage() {
                     className="w-full overflow-hidden rounded-[17px] border border-[#292d35] bg-[#15171c] p-3 transition hover:border-[#3a404b]"
                   >
                     <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-center">
-
                       <div className="relative h-[190px] w-full shrink-0 overflow-hidden rounded-[11px] sm:h-[88px] sm:w-[145px]">
                         <Image
                           src={workout.image}

@@ -78,22 +78,20 @@ export default function Navbar() {
         <div className="flex shrink-0 items-center gap-1 sm:gap-2">
           <Link
             href="/"
-            className={`rounded-full px-3 py-2.5 text-xs font-bold transition sm:px-6 sm:py-3 sm:text-sm ${
-              !isPlanPage
+            className={`rounded-full px-3 py-2.5 text-xs font-bold transition sm:px-6 sm:py-3 sm:text-sm ${!isPlanPage
                 ? "bg-[#142500] text-white"
                 : "text-gray-400 hover:text-white"
-            }`}
+              }`}
           >
             Workouts
           </Link>
 
           <Link
             href="/my-plan"
-            className={`whitespace-nowrap rounded-full px-3 py-2.5 text-xs font-bold transition sm:px-6 sm:py-3 sm:text-sm ${
-              isPlanPage
+            className={`whitespace-nowrap rounded-full px-3 py-2.5 text-xs font-bold transition sm:px-6 sm:py-3 sm:text-sm ${isPlanPage
                 ? "bg-[#142500] text-white"
                 : "text-gray-400 hover:text-white"
-            }`}
+              }`}
           >
             My Plan
           </Link>

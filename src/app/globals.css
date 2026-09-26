@@ -36,7 +36,7 @@ img {
   display: block;
 }
 
-/* Fixed Navbar Support */
+
 body {
   padding-top: 82px;
 }
@@ -51,7 +51,7 @@ nav {
   background: #090a0c;
 }
 
-/* Prevent page content from going under navbar */
+
 main {
   position: relative;
   z-index: 1;

@@ -89,7 +89,7 @@ export default function Home() {
                 className="inline-flex items-center gap-2 rounded-full bg-[#ccff00] px-6 py-3 text-[11px] font-black uppercase text-black transition hover:bg-[#b9eb00]"
               >
                 <span aria-hidden="true">Browse Workouts</span>
-                
+
               </a>
             </div>
           </div>

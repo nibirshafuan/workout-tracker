@@ -24,6 +24,7 @@ type Workout = {
 const API_URL = "https://api.abcz.workers.dev/api/fitlog";
 const PLAN_KEY = "fitlog-plan";
 const SAVED_KEY = "fitlog-saved";
+const DONE_KEY = "fitlog-done-v2";
 
 export default function WorkoutDetailsPage() {
   const params = useParams();
@@ -92,7 +93,17 @@ export default function WorkoutDetailsPage() {
         (item) => Number(item.id) !== Number(workout.id)
       );
 
+      const done = JSON.parse(
+        localStorage.getItem(DONE_KEY) || "[]"
+      ) as number[];
+
+      const updatedDone = done.filter(
+        (item) => Number(item) !== Number(workout.id)
+      );
+
       localStorage.setItem(PLAN_KEY, JSON.stringify(updatedPlan));
+      localStorage.setItem(DONE_KEY, JSON.stringify(updatedDone));
+
       setAddedToPlan(false);
       window.dispatchEvent(new Event("fitlog-storage"));
       return;
@@ -107,6 +118,7 @@ export default function WorkoutDetailsPage() {
 
     localStorage.setItem(PLAN_KEY, JSON.stringify(updatedPlan));
     setAddedToPlan(true);
+
     window.dispatchEvent(new Event("fitlog-storage"));
   };
 
@@ -128,6 +140,7 @@ export default function WorkoutDetailsPage() {
 
       localStorage.setItem(SAVED_KEY, JSON.stringify(updatedSaved));
       setSaved(false);
+
       window.dispatchEvent(new Event("fitlog-storage"));
       return;
     }
@@ -136,6 +149,7 @@ export default function WorkoutDetailsPage() {
 
     localStorage.setItem(SAVED_KEY, JSON.stringify(updatedSaved));
     setSaved(true);
+
     window.dispatchEvent(new Event("fitlog-storage"));
   };
 
@@ -182,136 +196,122 @@ export default function WorkoutDetailsPage() {
             ← Back to Library
           </Link>
 
-          <div className="overflow-hidden rounded-[18px] border border-[#292d35] bg-[#101216]">
-            <div className="grid grid-cols-1 lg:grid-cols-2">
-              <div className="relative min-h-[420px] bg-[#15171c] lg:min-h-[560px]">
-                <Image
-                  src={workout.image}
-                  alt={workout.name}
-                  fill
-                  priority
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-cover object-center"
-                />
+          <div className="overflow-hidden rounded-[18px] border border-[#292d35] bg-[#15171c]">
+            <div className="relative h-[320px] w-full">
+              <Image
+                src={workout.image}
+                alt={workout.name}
+                fill
+                sizes="(max-width: 768px) 100vw, 1100px"
+                className="object-cover object-top"
+              />
+            </div>
+
+            <div className="p-6 sm:p-8">
+              <div className="mb-4 flex flex-wrap gap-2">
+                {workout.muscleGroups.map((muscle) => (
+                  <span
+                    key={muscle}
+                    className="rounded-full bg-[#ccff00] px-3 py-[5px] text-[10px] font-bold uppercase leading-none text-black"
+                  >
+                    {muscle}
+                  </span>
+                ))}
               </div>
 
-              <div className="p-6 sm:p-8">
-                <h1 className="text-[28px] font-black uppercase leading-tight tracking-tight sm:text-[34px]">
-                  {workout.name}
-                </h1>
+              <h1 className="text-[32px] font-black uppercase leading-tight sm:text-[42px]">
+                {workout.name}
+              </h1>
 
-                <p className="mt-3 text-[14px] leading-6 text-[#7d8798]">
-                  {workout.description}
-                </p>
+              <p className="mt-2 text-[14px] text-[#7d8ba3]">
+                {workout.equipment}
+              </p>
 
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {workout.muscleGroups.map((muscle) => (
-                    <span
-                      key={muscle}
-                      className="rounded-full bg-[#ccff00] px-3 py-1.5 text-[10px] font-bold uppercase text-black"
-                    >
-                      {muscle}
-                    </span>
-                  ))}
+              <div className="my-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <div className="rounded-xl border border-[#292d35] bg-[#111318] p-4">
+                  <p className="text-[10px] uppercase text-[#697386]">
+                    Duration
+                  </p>
+                  <p className="mt-2 text-xl font-black">
+                    {workout.duration} min
+                  </p>
                 </div>
 
-                <div className="mt-5 overflow-hidden rounded-[12px] border border-[#272b32] bg-[#15171c]">
-                  <div className="grid grid-cols-2">
-                    <Info label="Equipment" value={workout.equipment} />
-                    <Info label="Difficulty" value={workout.difficulty} />
-                    <Info label="Sets" value={String(workout.sets)} />
-                    <Info label="Reps" value={workout.reps} />
-                    <Info label="Duration" value={`${workout.duration} min`} />
-                    <Info
-                      label="Calories"
-                      value={`${workout.caloriesBurned} kcal`}
-                    />
-
-                    <div className="col-span-2 px-4 py-3">
-                      <p className="text-[9px] font-bold uppercase text-[#697386]">
-                        Rating
-                      </p>
-
-                      <p className="mt-1 text-[12px] text-[#d5d9e0]">
-                        ☆ {workout.rating}
-                      </p>
-                    </div>
-                  </div>
+                <div className="rounded-xl border border-[#292d35] bg-[#111318] p-4">
+                  <p className="text-[10px] uppercase text-[#697386]">
+                    Calories
+                  </p>
+                  <p className="mt-2 text-xl font-black">
+                    {workout.caloriesBurned}
+                  </p>
                 </div>
 
-                <div className="mt-6">
-                  <h2 className="text-[13px] font-black uppercase">
+                <div className="rounded-xl border border-[#292d35] bg-[#111318] p-4">
+                  <p className="text-[10px] uppercase text-[#697386]">
+                    Sets
+                  </p>
+                  <p className="mt-2 text-xl font-black">
+                    {workout.sets}
+                  </p>
+                </div>
+
+                <div className="rounded-xl border border-[#292d35] bg-[#111318] p-4">
+                  <p className="text-[10px] uppercase text-[#697386]">
+                    Rating
+                  </p>
+                  <p className="mt-2 text-xl font-black">
+                    ★ {workout.rating}
+                  </p>
+                </div>
+              </div>
+
+              <p className="text-[14px] leading-7 text-[#aab2c0]">
+                {workout.description}
+              </p>
+
+              <div className="mt-7 flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={addToPlan}
+                  className="rounded-full bg-[#ccff00] px-7 py-3 text-[11px] font-black uppercase text-black transition hover:bg-[#b9eb00]"
+                >
+                  {addedToPlan ? "Remove from Plan" : "Add to Plan"}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={saveWorkout}
+                  className="rounded-full border border-[#343943] px-7 py-3 text-[11px] font-black uppercase text-white transition hover:border-[#ccff00] hover:text-[#ccff00]"
+                >
+                  {saved ? "Saved" : "Save Workout"}
+                </button>
+              </div>
+
+              {workout.instructions.length > 0 && (
+                <div className="mt-8">
+                  <h2 className="text-xl font-black uppercase">
                     Instructions
                   </h2>
 
-                  <ol className="mt-3 space-y-2">
+                  <ol className="mt-4 space-y-3">
                     {workout.instructions.map((instruction, index) => (
                       <li
-                        key={index}
-                        className="flex gap-3 text-[12px] leading-5 text-[#929baa]"
+                        key={`${workout.id}-${index}`}
+                        className="flex gap-3 text-[13px] leading-6 text-[#aab2c0]"
                       >
-                        <span className="min-w-[14px] font-bold text-[#7d8798]">
+                        <span className="font-black text-[#ccff00]">
                           {index + 1}.
                         </span>
-
                         <span>{instruction}</span>
                       </li>
                     ))}
                   </ol>
                 </div>
-
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <button
-                    type="button"
-                    onClick={addToPlan}
-                    className={`rounded-lg px-5 py-3 text-[11px] font-bold uppercase transition-all duration-200 hover:-translate-y-1 ${
-                      addedToPlan
-                        ? "bg-[#9dcc00] text-black"
-                        : "bg-[#ccff00] text-black"
-                    }`}
-                  >
-                    {addedToPlan
-                      ? "Remove from today's plan"
-                      : "Add to today's plan"}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={saveWorkout}
-                    className={`rounded-lg border px-5 py-3 text-[11px] font-bold uppercase transition-all duration-200 hover:-translate-y-1 ${
-                      saved
-                        ? "border-[#ccff00] text-[#ccff00]"
-                        : "border-[#343943] text-[#b5bdca]"
-                    }`}
-                  >
-                    {saved ? "Saved" : "Save for later"}
-                  </button>
-                </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
       </section>
     </main>
-  );
-}
-
-function Info({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="border-b border-[#272b32] px-4 py-3">
-      <p className="text-[9px] font-bold uppercase text-[#697386]">
-        {label}
-      </p>
-
-      <p className="mt-1 text-[12px] text-[#d5d9e0]">
-        {value}
-      </p>
-    </div>
   );
 }

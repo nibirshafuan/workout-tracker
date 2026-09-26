@@ -55,23 +55,30 @@ export default function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 border-b border-[#202227] bg-[#090a0c]">
-      <div className="mx-auto flex h-[72px] max-w-[1400px] items-center justify-between px-5 sm:px-8">
-        <Link href="/" className="flex items-center gap-2">
+      <div className="mx-auto flex h-[72px] w-full max-w-[1400px] items-center justify-between px-3 sm:px-5 lg:px-8">
+        {/* Logo */}
+        <Link
+          href="/"
+          className="flex shrink-0 items-center gap-2"
+        >
           <Image
             src="/logo.png"
             alt="FitLog"
             width={28}
             height={28}
-            className="h-7 w-auto"
+            className="h-7 w-7"
           />
 
-          <span className="text-xl font-black">FITLOG</span>
+          <span className="text-lg font-black sm:text-xl">
+            FITLOG
+          </span>
         </Link>
 
-        <div className="absolute left-1/2 flex -translate-x-1/2 items-center gap-2">
+        {/* Navigation */}
+        <div className="flex shrink-0 items-center gap-1 sm:gap-2">
           <Link
             href="/"
-            className={`rounded-full px-6 py-3 text-sm font-bold transition ${
+            className={`rounded-full px-3 py-2.5 text-xs font-bold transition sm:px-6 sm:py-3 sm:text-sm ${
               !isPlanPage
                 ? "bg-[#142500] text-white"
                 : "text-gray-400 hover:text-white"
@@ -82,7 +89,7 @@ export default function Navbar() {
 
           <Link
             href="/my-plan"
-            className={`rounded-full px-6 py-3 text-sm font-bold transition ${
+            className={`whitespace-nowrap rounded-full px-3 py-2.5 text-xs font-bold transition sm:px-6 sm:py-3 sm:text-sm ${
               isPlanPage
                 ? "bg-[#142500] text-white"
                 : "text-gray-400 hover:text-white"
@@ -92,25 +99,26 @@ export default function Navbar() {
           </Link>
         </div>
 
-        <div className="flex items-center gap-5 text-sm">
+        {/* Counters */}
+        <div className="flex shrink-0 items-center gap-2 text-xs sm:gap-5 sm:text-sm">
           <Link
             href="/my-plan?tab=plan"
-            className="flex items-center gap-2"
+            className="flex items-center gap-1.5 whitespace-nowrap sm:gap-2"
           >
             <span>Plan</span>
 
-            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#ccff00] px-1 text-xs font-bold text-black">
+            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#ccff00] px-1 text-[11px] font-bold text-black">
               {planCount}
             </span>
           </Link>
 
           <Link
             href="/my-plan?tab=saved"
-            className="flex items-center gap-2 text-gray-300"
+            className="flex items-center gap-1.5 whitespace-nowrap text-gray-300 sm:gap-2"
           >
             <span>Saved</span>
 
-            <span className="flex h-5 min-w-5 items-center justify-center rounded-full border border-[#363940] px-1 text-xs text-gray-400">
+            <span className="flex h-5 min-w-5 items-center justify-center rounded-full border border-[#363940] px-1 text-[11px] text-gray-400">
               {savedCount}
             </span>
           </Link>

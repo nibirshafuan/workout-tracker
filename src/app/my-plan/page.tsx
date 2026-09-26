@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useSyncExternalStore } from "react";
+import { Suspense, useState, useSyncExternalStore } from "react";
+import { useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 
 type Workout = {
@@ -90,7 +91,9 @@ function useStoredValue(key: string) {
   );
 }
 
-export default function MyPlanPage() {
+function MyPlanContent() {
+  const searchParams = useSearchParams();
+
   const planStorage = useStoredValue(PLAN_KEY);
   const savedStorage = useStoredValue(SAVED_KEY);
   const doneStorage = useStoredValue(DONE_KEY);
@@ -99,7 +102,10 @@ export default function MyPlanPage() {
   const saved = parseWorkouts(savedStorage);
   const done = parseDone(doneStorage);
 
-  const [activeTab, setActiveTab] = useState<"plan" | "saved">("plan");
+  const tabFromUrl = searchParams.get("tab");
+
+  const activeTab: "plan" | "saved" =
+    tabFromUrl === "saved" ? "saved" : "plan";
 
   const [sortBy, setSortBy] = useState<
     "duration" | "calories" | "rating"
@@ -189,9 +195,13 @@ export default function MyPlanPage() {
     window.dispatchEvent(new Event(STORAGE_EVENT));
 
     if (alreadyDone) {
-      toast.info(`${workout?.name || "Workout"} marked as not done`);
+      toast.info(
+        `${workout?.name || "Workout"} marked as not done`
+      );
     } else {
-      toast.success(`${workout?.name || "Workout"} marked as done`);
+      toast.success(
+        `${workout?.name || "Workout"} marked as done`
+      );
     }
   };
 
@@ -243,9 +253,8 @@ export default function MyPlanPage() {
 
           <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="inline-flex w-fit rounded-[11px] border border-[#292d35] bg-[#15171c] p-1">
-              <button
-                type="button"
-                onClick={() => setActiveTab("plan")}
+              <Link
+                href="/my-plan"
                 className={`rounded-[8px] px-7 py-3 text-[11px] font-black transition ${
                   activeTab === "plan"
                     ? "bg-[#22262d] text-white"
@@ -253,11 +262,10 @@ export default function MyPlanPage() {
                 }`}
               >
                 Today&apos;s Plan
-              </button>
+              </Link>
 
-              <button
-                type="button"
-                onClick={() => setActiveTab("saved")}
+              <Link
+                href="/my-plan?tab=saved"
                 className={`rounded-[8px] px-7 py-3 text-[11px] font-black transition ${
                   activeTab === "saved"
                     ? "bg-[#22262d] text-white"
@@ -265,7 +273,7 @@ export default function MyPlanPage() {
                 }`}
               >
                 Saved
-              </button>
+              </Link>
             </div>
 
             <div className="flex items-center gap-3">
@@ -359,7 +367,9 @@ export default function MyPlanPage() {
 
                         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-[10px] text-[#9aa5b7]">
                           <span>◷ {workout.duration} min</span>
-                          <span>♨ {workout.caloriesBurned} kcal</span>
+                          <span>
+                            ♨ {workout.caloriesBurned} kcal
+                          </span>
                           <span>★ {workout.rating}</span>
                         </div>
                       </div>
@@ -382,7 +392,9 @@ export default function MyPlanPage() {
                                 : "bg-[#ccff00] text-black hover:bg-[#b9eb00]"
                             }`}
                           >
-                            {isDone ? "✓ Done" : "✓ Mark as Done"}
+                            {isDone
+                              ? "✓ Done"
+                              : "✓ Mark as Done"}
                           </button>
                         )}
 
@@ -408,5 +420,24 @@ export default function MyPlanPage() {
         </div>
       </section>
     </main>
+  );
+}
+
+export default function MyPlanPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="min-h-screen bg-[#090a0c] text-white">
+          <div className="flex min-h-[60vh] items-center justify-center">
+            <div className="flex items-center gap-3 text-[#ccff00]">
+              <div className="h-5 w-5 animate-spin rounded-full border-2 border-[#ccff00] border-t-transparent" />
+              <span className="text-sm">Loading workouts...</span>
+            </div>
+          </div>
+        </main>
+      }
+    >
+      <MyPlanContent />
+    </Suspense>
   );
 }

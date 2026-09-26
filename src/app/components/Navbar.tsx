@@ -93,7 +93,10 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-5 text-sm">
-          <Link href="/my-plan" className="flex items-center gap-2">
+          <Link
+            href="/my-plan?tab=plan"
+            className="flex items-center gap-2"
+          >
             <span>Plan</span>
 
             <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#ccff00] px-1 text-xs font-bold text-black">
@@ -102,7 +105,7 @@ export default function Navbar() {
           </Link>
 
           <Link
-            href="/my-plan"
+            href="/my-plan?tab=saved"
             className="flex items-center gap-2 text-gray-300"
           >
             <span>Saved</span>
